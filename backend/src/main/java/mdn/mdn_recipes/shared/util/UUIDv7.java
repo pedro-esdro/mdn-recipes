@@ -1,4 +1,4 @@
-package mdn.mdn_recipes.service.util;
+package mdn.mdn_recipes.shared.util;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 

@@ -1,11 +1,13 @@
-package mdn.mdn_recipes.entity;
+package mdn.mdn_recipes.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import mdn.mdn_recipes.service.util.UUIDv7;
+import mdn.mdn_recipes.application.dto.recipe.RecipeRequest;
+import mdn.mdn_recipes.shared.util.UUIDv7;
 
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -45,4 +47,27 @@ public class Recipe {
             this.id = UUIDv7.create();
     }
 
+    public static Recipe fromDTO(RecipeRequest request)
+    {
+        Recipe recipe = new Recipe();
+        recipe.name = request.name();
+        recipe.description = request.description();
+        recipe.servings = request.servings();
+        recipe.preparationTime = request.preparationTime();
+        recipe.imagePath = request.imagePath();
+
+        if (request.ingredients() != null) {
+            recipe.ingredients = request.ingredients().stream()
+                    .map(i -> new Ingredient(recipe, i.getName(), i.getQuantity()))
+                    .collect(Collectors.toList());
+        }
+
+        if (request.steps() != null) {
+            recipe.steps = request.steps().stream()
+                    .map(s -> new Step(recipe, s.getDescription(), s.getStepOrder()))
+                    .collect(Collectors.toList());
+        }
+
+        return recipe;
+    }
 }
